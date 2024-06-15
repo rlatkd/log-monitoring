@@ -1,0 +1,138 @@
+networks:
+  elk:
+    driver: bridge
+
+services:
+
+  elasticsearch:
+    container_name: elasticsearch
+
+    #elasticsearch는 8버전부터 보안설정이 달라짐
+    image: elasticsearch:7.17.16
+    ports:
+      - 9200:9200
+      - 9300:9300
+
+    #현재 위치에서 elasticsearch 디렉터리 볼륨마운트
+    volumes:
+      - ./elk/elasticsearch:/usr/share/elasticsearch/data
+    environment:
+      discovery.type: single-node
+
+      #시큐리티 on
+      xpack.security.enabled: true
+
+      #ssl on
+      xpack.security.transport.ssl.enabled: true
+
+      #FE서버 CORS 허용
+      http.cors.allow-origin: "*"
+      http.cors.enabled: true
+      http.cors.allow-credentials: true
+      http.cors.allow-methods: OPTIONS, HEAD, GET, POST, PUT, DELETE
+      http.cors.allow-headers: X-Requested-With, X-Auth-Token, Content-Type, Content-Length, Authorization, Access-Control-Allow-Headers, Accept, x-elastic-client-meta
+      
+      #username은 변경 불가
+      #password는 5자 이상
+      ELASTIC_USERNAME: "elastic"
+      ELASTIC_PASSWORD: "elastic123!@#"
+    networks:
+      - elk
+    restart: unless-stopped
+
+  logstash:
+    container_name: logstash
+    image: docker.elastic.co/logstash/logstash:7.17.16
+    ports:
+      - 5000:5000
+      - 9600:9600
+    volumes:
+      - ./elk/logstash/pipeline/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    depends_on:
+      - elasticsearch
+      - kafka
+    networks:
+      - elk
+    restart: unless-stopped
+
+  kibana:
+    container_name: kibana
+    image: kibana:7.17.16
+    ports:
+      - 5601:5601
+    depends_on:
+      - elasticsearch
+    volumes:
+      - ./elk/kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml
+    networks:
+      - elk
+    restart: unless-stopped
+
+  zookeeper:
+    container_name: zookeeper
+    image: wurstmeister/zookeeper
+    ports:
+      - 2181:2181
+    networks:
+      - elk
+    restart: unless-stopped
+
+  kafka:
+    container_name: kafka
+    image: wurstmeister/kafka
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+
+      #도커 네트워크 내부에선 컨테이너들이 kafka:29092로 접근
+      #외부 애플리케이션(스프링부트)에선 localhost:9092로 접근
+      KAFKA_LISTENERS: PLAINTEXT://:29092,PLAINTEXT_HOST://:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+
+      KAFKA_ADVERTISED_PORT: 9092
+
+      #카프카 토픽 레플리카 갯수
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+      #카프카 토픽이름/파티션 수/레플리카 수
+      KAFKA_CREATE_TOPICS: "kafka-elk:1:1"
+    ports:
+      - 9092:9092
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - zookeeper
+    networks:
+      - elk
+    restart: unless-stopped
+
+  client:
+    container_name: client
+    build:
+      context: "./client"
+      dockerfile: Dockerfile 
+    ports: 
+      - "3000:3000"
+
+    #도커 네트워크 설정 필수
+    networks:
+      - elk
+    restart: unless-stopped
+
+  server:
+    container_name: server
+    build:
+      context: "./server"
+      dockerfile: Dockerfile
+    depends_on:
+      - kafka
+    ports:
+      - "9100:9100"
+    environment:
+      - TZ=Asia/Seoul
+
+    #도커 네트워크 설정 필수
+    networks:
+      - elk
+    restart: unless-stopped
