@@ -39,3 +39,7 @@ http://localhost:3000/dashboard
     6.1. Kibana를 통해 Elasticsearch에 있는 LOG 데이터를 모니터링 할 수 있음 (http://localhost:5601)
 7. React가 Elasticsearch에게 GET 요청하면 해당 LOG 데이터 가져와서 커스텀한 형식에 맞게 화면에 보여줌
 ```
+
+## 후기
+엘라스틱서치는 아주 좋은 기술입니다.
+조금 더 깊게 공부해보겠습니다.
