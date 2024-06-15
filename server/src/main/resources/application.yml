@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: server
+
+server:
+  port: 9100
+
+#차후 다른 서비스에 사용될 카프카 설정
+#  kafka:
+#    producer:
+#      bootstrap-servers: kafka:9092
+#    consumer:
+#      group-id: kafka-log
+#      auto-offset-reset: earliest
+#      bootstrap-servers: kafka:9092
