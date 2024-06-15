@@ -24,7 +24,7 @@ docker-compose up (--build)
 **웹 브라우저에서 확인**
 
 ```
-localhost:3000/dashboard
+http://localhost:3000/dashboard
 ```
 
 ## Flow
