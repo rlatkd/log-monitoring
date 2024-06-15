@@ -2,6 +2,10 @@
 
 <img src = "https://github.com/rlatkd/monitoring-system/blob/main/assets/preview.png">
 
+## System Architecture
+
+<img src = "https://github.com/rlatkd/monitoring-system/blob/main/assets/system-architecture.png">
+
 ## Command
 
 ```
