@@ -1,5 +1,1 @@
-2024-06-13 11:25:08.345 [kafka-producer-network-thread | logstash]  INFO org.apache.kafka.clients.NetworkClient - [Producer clientId=logstash] Node -1 disconnected.
-2024-06-13 11:35:08.358 [kafka-producer-network-thread | logstash]  INFO org.apache.kafka.clients.NetworkClient - [Producer clientId=logstash] Node -1 disconnected.
-2024-06-13 12:03:34.368 [kafka-producer-network-thread | logstash]  INFO org.apache.kafka.clients.NetworkClient - [Producer clientId=logstash] Node 1001 disconnected.
-2024-06-13 12:03:35.403 [kafka-producer-network-thread | logstash]  INFO org.apache.kafka.clients.NetworkClient - [Producer clientId=logstash] Node 1001 disconnected.
-2024-06-13 12:03:36.405 [kafka-producer-network-thread | logstash]  INFO org.apache.kafka.clients.NetworkClient - [Producer clientId=logstash] Cancelled in-flight API_VERSIONS request with correlation id 39 due to node 1001 being disconnected (elapsed time since creation: 16ms, elapsed time since send: 16ms, request timeout: 30000ms)
+this is log
