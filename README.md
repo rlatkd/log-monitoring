@@ -41,4 +41,4 @@ http://localhost:3000/dashboard
 ```
 
 ## 후기
-조금 더 깊게 공부해보겠습니다.
+Front에서 조회 성능에 따른 코드 개선 필요
